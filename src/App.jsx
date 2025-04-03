@@ -1,9 +1,10 @@
 import { Canvas, useThree } from "@react-three/fiber";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { OrbitControls } from "@react-three/drei";
 import QuidditchPitch from "./components/QuidditchPitch.jsx";
 import Terrain from "./components/Terrain.jsx";
 import HarryPotter from "./components/HarryPotter.jsx";
+import FollowHarry from "./components/FollowHarry.jsx";
 
 function CameraSetup() {
   const { camera } = useThree();
@@ -18,11 +19,11 @@ function CameraSetup() {
 }
 
 function App() {
+  const harryRef = useRef();
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <Canvas camera={{ fov: 50 }}>
-        <CameraSetup /> {/* Apply custom camera settings */}
-        
+        <FollowHarry targetRef={harryRef}/>
         {/* Fog for depth */}
         {/* <fog attach="fog" args={["#b2d8b2", 500, 700]} /> */}
 
@@ -35,7 +36,7 @@ function App() {
         <QuidditchPitch />
 
         {/* Add Harry to the scene */}
-        <HarryPotter />
+        <HarryPotter harryRef={harryRef} />
 
         {/* Camera Controls */}
         <OrbitControls maxPolarAngle={Math.PI / 2} />
