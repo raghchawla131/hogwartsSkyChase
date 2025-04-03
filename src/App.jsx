@@ -1,31 +1,20 @@
-import { Canvas, useThree } from "@react-three/fiber";
-import { useEffect, useRef } from "react";
+import { Canvas } from "@react-three/fiber";
+import { useRef, useState } from "react";
 import { OrbitControls } from "@react-three/drei";
 import QuidditchPitch from "./components/QuidditchPitch.jsx";
 import Terrain from "./components/Terrain.jsx";
 import HarryPotter from "./components/HarryPotter.jsx";
 import FollowHarry from "./components/FollowHarry.jsx";
 
-function CameraSetup() {
-  const { camera } = useThree();
-
-  useEffect(() => {
-    camera.position.set(0, 200, 200); // Move camera
-    camera.rotation.x = Math.PI; // Rotate 180 degrees
-    camera.lookAt(0, 0, 0); // Ensure it points at the scene center
-  }, [camera]);
-
-  return null;
-}
-
 function App() {
-  const harryRef = useRef();
+  const harryRef = useRef(); // Reference to Harry
+  const [isUserRotating, setIsUserRotating] = useState(false); // Track if user is rotating
+
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <Canvas camera={{ fov: 50 }}>
-        <FollowHarry targetRef={harryRef}/>
-        {/* Fog for depth */}
-        {/* <fog attach="fog" args={["#b2d8b2", 500, 700]} /> */}
+        {/* Camera follows Harry unless user is rotating */}
+        <FollowHarry targetRef={harryRef} isUserRotating={isUserRotating} />
 
         {/* Lighting */}
         <ambientLight intensity={0.5} />
@@ -35,12 +24,15 @@ function App() {
         <Terrain />
         <QuidditchPitch />
 
-        {/* Add Harry to the scene */}
+        {/* Harry Potter model */}
         <HarryPotter harryRef={harryRef} />
 
-        {/* Camera Controls */}
-        <OrbitControls maxPolarAngle={Math.PI / 2} />
-
+        {/* OrbitControls to allow rotation
+        <OrbitControls
+          maxPolarAngle={Math.PI / 2}
+          onStart={() => setIsUserRotating(true)} // Detect when user starts rotating
+          onEnd={() => setTimeout(() => setIsUserRotating(false), 2000)} // Resume auto-follow after 2s
+        /> */}
       </Canvas>
     </div>
   );
